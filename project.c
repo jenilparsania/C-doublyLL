@@ -30,7 +30,6 @@ struct movie *sort(struct movie *start);
 void searchMovie(struct movie *start);
 float calculateEarnings(struct movie *start);
 struct movie *exitProgram(struct movie *start);
-void browseMoviesInverse(struct movie *start);
 
 
 void showMainMenu();
@@ -82,7 +81,6 @@ int main () {
             case 7: searchMovie(start); break;
             case 8: total = calculateEarnings(start); printf("\nStore has earned $%.2f\n", total); break;
             case 9: start = exitProgram(start); break;
-            case 10: browseMoviesInverse(start); break;
             default: fputs("\nError. Choice not found.", stdout);
         }
     }
@@ -171,16 +169,51 @@ void addMovie(struct movie *start) {
 }
 
 void browseMovies(struct movie *start) {
-    fputs("\n\nBrowsing through entries...", stdout);
+    fputs("\n\nBrowsing through entries...\n", stdout);
     char choice;
     choice = 'Y';
     int ch;
-    int count = 0;
-    char browseInverse;
+    int count = 1;
+    char browseInverse = 'n';
 
     struct movie *current = start;
 
-    
+    puts("Do you want to browse Inversly?(y/n) ");
+    browseInverse = fgetc(stdin);
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+    if (browseInverse == 'y'){
+        puts("browse inverse running");
+        struct movie *current = start;
+
+        while(current->next != NULL){
+
+            count++;
+            current = current->next;   
+        }
+        // after this loop , this would make it to the last pointer
+
+        while(current!=start){
+        printf("\n\n%d\n",count);
+        
+        showMovie(current);
+
+        if(current == NULL){
+            puts("Starting of database reached");
+            break;
+        }
+        
+
+        current = current->prev;
+        count--;
+        }
+
+        printf("\n");
+        showMovie(current);
+        return;
+    }
+
+    count = 0;
 
     while (current != NULL && choice != 'N' && choice != 'n') {
         count++;
@@ -211,42 +244,6 @@ void browseMovies(struct movie *start) {
 
 }
 
-void browseMoviesInverse(struct movie *start) {
-    fputs("\n\nBrowsing through entries...", stdout);
-    char choice;
-    choice = 'Y';
-    int ch;
-    int count = 1;
-    char browseInverse;
-
-    struct movie *current = start;
-
-    while(current->next != NULL){
-
-        count++;
-        current = current->next;   
-    }
-    // after this loop , this would make it to the last pointer
-
-    while(current!=start){
-        printf("\n\n%d\n",count);
-        
-        showMovie(current);
-
-        if(current == NULL){
-            puts("Starting of database reached");
-            break;
-        }
-        
-
-        current = current->prev;
-        count--;
-    }
-    
-    showMovie(current);
-    
-}
-
 
 void showMovie(struct movie *current) {
     if (current != NULL) {
@@ -258,6 +255,7 @@ void showMovie(struct movie *current) {
         printf("Number of Rentals: %d\n", current->views);
         printf("Current Renter: %d\n", current->renter);
         printf("Due Date: %s\n", current->dueDate);
+        printf("\n");
     } 
 }
 
